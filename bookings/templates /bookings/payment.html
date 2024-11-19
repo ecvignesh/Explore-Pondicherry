@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+
+    <!-- Adding some basic CSS for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #007BFF;
+            font-size: 2rem;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        #payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 1.1rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .stripe-error {
+            color: red;
+            font-size: 0.9rem;
+        }
+
+        .stripe-message {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Complete Your Payment</h1>
+        <p>Fill in your details below to make the payment</p>
+
+        <form method="post" id="payment-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <!-- Stripe's card element will be injected here -->
+            <div id="card-element"></div>
+            <div id="card-errors" class="stripe-error"></div>
+
+            <button id="submit">Pay</button>
+        </form>
+
+        <div class="stripe-message" id="payment-status"></div>
+    </div>
+
+    <!-- Stripe.js library -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        // Set your publishable key from Stripe
+        var stripe = Stripe('your-publishable-key-here'); // Replace with your actual Stripe key
+        var elements = stripe.elements();
+        var card = elements.create('card');
+        card.mount('#card-element');
+
+        var form = document.getElementById('payment-form');
+        var submitButton = document.getElementById('submit');
+        var cardErrors = document.getElementById('card-errors');
+        var paymentStatus = document.getElementById('payment-status');
+
+        // Handle form submission
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function (result) {
+                if (result.error) {
+                    // Display error in #card-errors element
+                    cardErrors.textContent = result.error.message;
+                } else {
+                    // Send the token to your server to complete the payment
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        // Handle the token and send it to your server
+        function stripeTokenHandler(token) {
+            var formData = new FormData(form);
+            formData.append('stripeToken', token.id);
+
+            // Make the payment request to your backend (Django view)
+            fetch('/your-payment-endpoint/', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    paymentStatus.textContent = 'Payment successful! You will be redirected shortly.';
+                    setTimeout(function () {
+                        window.location.href = '/payment-success/';
+                    }, 3000); // Redirect after 3 seconds
+                } else {
+                    paymentStatus.textContent = 'Payment failed. Please try again.';
+                }
+            }).catch(function (error) {
+                paymentStatus.textContent = 'Error processing payment. Please try again later.';
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: explore_pondy
+      POSTGRES_USER: pondicherry
+      POSTGRES_PASSWORD: pondy77
+    volumes:
+      - pondicherry_tourism_db_data:/var/lib/postgresql/data  # This will mount the volume to the correct path
+
+  web:
+    build: .
+    command: gunicorn pondicherry_tourism.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/code
+      - static_volume:/app/static  # Ensure static files are available
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+    depends_on:
+      - db
+
+volumes:
+  pondicherry_tourism_db_data: {}
+  static_volume: {}  # Add volume for static files

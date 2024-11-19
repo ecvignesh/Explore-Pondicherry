@@ -1,0 +1,13 @@
+<!-- places/templates/places/place_map.html -->
+{% load leaflet_tags %}
+<div id="map" style="width: 600px; height: 400px;"></div>
+{% leaflet_map map_id='map' %}
+<script>
+    var places = {{ places|safe }};
+    places.forEach(function(place) {
+        var lat = place.latitude;
+        var lng = place.longitude;
+        var marker = L.marker([lat, lng]).addTo(map);
+        marker.bindPopup(place.name);
+    });
+</script>

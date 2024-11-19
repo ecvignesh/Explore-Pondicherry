@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success</title>
+
+    <!-- Adding some basic CSS for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: green;
+            font-size: 2rem;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+
+    <!-- Optional JavaScript for further interactivity (e.g., redirect after a few seconds) -->
+    <script>
+        setTimeout(function () {
+            window.location.href = "/";
+        }, 5000); // Redirects the user after 5 seconds
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Payment was successful!</h1>
+        <p>Thank you for your booking. Your payment has been processed successfully.</p>
+
+        <div class="success-message">
+            You will be redirected to the homepage shortly.
+        </div>
+
+        <a href="/">Go back to the home page</a>
+    </div>
+
+</body>
+</html>
